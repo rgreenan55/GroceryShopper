@@ -13,11 +13,9 @@ import cs2063.groceryshopper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
         // Button for Adding New Receipt
         /* TODO: Add Functionality for this
@@ -25,9 +23,9 @@ class MainActivity : AppCompatActivity() {
         *   Then once the user inputs a picture, read the data
         *   Once data is read, save it as a new trip
         * */
-        binding.fab.setOnClickListener { view ->
+        /*binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
-        }
+        }*/
     }
 }
