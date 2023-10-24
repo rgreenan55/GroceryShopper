@@ -1,6 +1,8 @@
 package cs2063.groceryshopper
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -9,6 +11,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import cs2063.groceryshopper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,5 +30,13 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }*/
+
+        val benButton : Button = findViewById<Button>(R.id.benButton)
+
+        benButton.setOnClickListener{
+            val intent : Intent = Intent(this@MainActivity, DataTestActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
