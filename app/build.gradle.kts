@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "cs2063.groceryshopper"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "cs2063.groceryshopper"
