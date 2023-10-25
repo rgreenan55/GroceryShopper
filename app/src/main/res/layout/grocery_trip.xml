@@ -16,22 +16,20 @@
         app:cardBackgroundColor="@color/White"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"
-        >
+    >
         <TextView
-            android:id="@+id/item"
+            android:id="@+id/tripDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item Here"
             android:layout_gravity="bottom|start"
             android:layout_margin="20dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            />
+        />
         <TextView
-            android:id="@+id/itemCost"
+            android:id="@+id/tripCost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$20.00"
             android:layout_gravity="bottom|end"
             android:layout_margin="20dp"
             android:textSize="20sp"

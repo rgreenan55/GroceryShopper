@@ -13,17 +13,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Open Overall Activity
-        val overallActivityIntent = Intent(this, OverallActivity::class.java)
         val overallButton = findViewById<Button>(R.id.viewOverall)
         overallButton.setOnClickListener {
+            val overallActivityIntent = Intent(this, OverallActivity::class.java)
             this.startActivity(overallActivityIntent)
         }
 
         // ListView Creator
         // https://www.vogella.com/tutorials/AndroidListView/article.html
         // TODO: Utilize ID maybe for onClick so that we can retrieve trip details
-        val listGenerator = ListGenerator()
-        listGenerator.generateList(this)
+        val listOfTripsGenerator = ListOfTripsGenerator()
+        listOfTripsGenerator.generateList(this)
 
         // Button for Adding New Receipt
         val newTripButton = findViewById<FloatingActionButton>(R.id.newTrip)
@@ -31,11 +31,6 @@ class MainActivity : AppCompatActivity() {
             // TODO: Add Functionality for adding new Trip
             Toast.makeText(this, "New Trip Created", Toast.LENGTH_SHORT).show()
         }
-
-        /*binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }*/
     }
 
 }
