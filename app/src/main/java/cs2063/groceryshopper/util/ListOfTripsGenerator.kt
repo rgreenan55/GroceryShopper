@@ -1,8 +1,11 @@
-package cs2063.groceryshopper
+package cs2063.groceryshopper.util
 
 import android.content.Intent
 import android.widget.ListView
 import android.widget.SimpleAdapter
+import cs2063.groceryshopper.MainActivity
+import cs2063.groceryshopper.R
+import cs2063.groceryshopper.TripActivity
 
 class ListOfTripsGenerator {
     fun generateList(activity : MainActivity) {

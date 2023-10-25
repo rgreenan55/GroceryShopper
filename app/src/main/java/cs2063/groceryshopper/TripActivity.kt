@@ -41,7 +41,7 @@ class TripActivity : AppCompatActivity() {
     private fun getItems() : ArrayList<Map<String,String>>{
         val list = ArrayList<Map<String,String>>()
         for (i in 1..10) {
-            list.add(putData("Item $i, 2023", "$${(10..20).random()}.${(10..99).random()}"))
+            list.add(putData("Item $i", "$${(10..20).random()}.${(10..99).random()}"))
         }
         return list
     }
