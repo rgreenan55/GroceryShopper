@@ -20,7 +20,7 @@
         android:divider="@null"
         />
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/viewOverall"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
@@ -43,8 +43,4 @@
         app:backgroundTint="@color/MainColor"
         app:tint="@color/White"
         />
-
-
-
-
 </RelativeLayout>

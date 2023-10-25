@@ -6,6 +6,17 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.provider.ContactsContract.Data
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Button
+import cs2063.groceryshopper.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
