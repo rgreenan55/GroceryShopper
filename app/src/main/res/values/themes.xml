@@ -1,8 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.GroceryShopper" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.GroceryShopper" parent="Theme.Material3.Light">
+        <item name="colorPrimary">@color/MainColor</item>
+        <item name="android:textColor">@color/Black</item>
     </style>
 
     <style name="Theme.GroceryShopper" parent="Base.Theme.GroceryShopper" />
