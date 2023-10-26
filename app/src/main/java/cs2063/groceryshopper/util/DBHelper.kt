@@ -61,7 +61,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun deleteTrip(id: Int): Int {
         val db = this.writableDatabase
-        return db.delete(TRIP_TABLE_NAME, "id = ? ", arrayOf((id).toString()))
+        return db.delete(TRIP_TABLE_NAME, "$TRIP_COLUMN_ID = ? ", arrayOf((id).toString()))
     }
 
     fun getAllTrips(): ArrayList<Trip>?{
@@ -146,8 +146,8 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun testDBs(){
         remakeDBs()
-        insertTrip(100.0, "Oct 3, 2032", "Sobeys")
-        insertTrip(100.0, "Oct 3, 2032", "Sobeys")
+        insertTrip(420.0, "Oct 3, 2032", "High Times")
+        insertTrip(0.69, "Oct 5, 2032", "Dolls R Us")
         val tripsList = getAllTrips()
         Log.i("Trips", "Getting All Trips:")
         if(tripsList == null){
@@ -161,9 +161,9 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
                 Log.i("Trips", trip.toString())
             }
         }
-        insertItem(1, 1.12, "Apple")
-        insertItem(1, 3.12, "Green Apple")
-        insertItem(2, 1.12, "Apple")
+        insertItem(1, 400.0, "High End Pipe")
+        insertItem(1, 20.0, "Filters")
+        insertItem(2, 0.69, "Lube Sample")
         val itemsList = getAllItemsForTrip(1)
         Log.i("Items", "Getting items for TripId 1")
         if(itemsList == null){

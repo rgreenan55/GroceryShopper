@@ -21,20 +21,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         val db = DBHelper(this)
-        db.testDBs()
+
 
         // ListView Creator
         // https://www.vogella.com/tutorials/AndroidListView/article.html
         // TODO: Utilize ID maybe for onClick so that we can retrieve trip details
         val listOfTripsGenerator = ListOfTripsGenerator()
-        listOfTripsGenerator.generateList(this)
+        listOfTripsGenerator.generateList(this, db)
 
         // Button for Adding New Receipt
         val newTripButton = findViewById<FloatingActionButton>(R.id.newTrip)
         newTripButton.setOnClickListener {
             // TODO: Add Functionality for adding new Trip
             Toast.makeText(this, "New Trip Created", Toast.LENGTH_SHORT).show()
+            db.testDBs()
+            listOfTripsGenerator.generateList(this, db)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val listOfTripsGenerator = ListOfTripsGenerator()
+        val db = DBHelper(this)
+        listOfTripsGenerator.generateList(this, db)
     }
 
 }
