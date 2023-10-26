@@ -16,7 +16,6 @@ class TripActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.trip_view)
 
-        // TODO: Retrieve date from data
         val title = this.findViewById<TextView>(R.id.dateTitle)
         val titleString = intent.extras?.getString("storeName") + " - " + intent.extras?.getString("date") + " - " + intent.extras?.getDouble("total") + "$"
         title.text = titleString
@@ -29,7 +28,6 @@ class TripActivity : AppCompatActivity() {
         val listOfItemsGenerator = ListOfItemsGenerator()
         listOfItemsGenerator.generateList(this, db, tripId)
 
-        // TODO: Delete trip from data
         val deleteButton = this.findViewById<Button>(R.id.deleteTrip)
         deleteButton.setOnClickListener {
             // Delete Data Here

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import cs2063.groceryshopper.model.Trip
 import android.util.Log
 import cs2063.groceryshopper.model.Item
+import java.util.Objects
 
 class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
 
@@ -145,52 +146,61 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return output
     }
 
-    fun testDBs(){
-        remakeDBs()
-        insertTrip(420.0, "Oct 3, 2032", "High Times")
-        insertTrip(0.69, "Oct 5, 2032", "Dolls R Us")
-        val tripsList = getAllTrips()
+    private fun createTestData(){
+        insertTrip(13.37, "Oct 3, 2032", "Sobey's")
+        insertTrip(420.69, "Oct 5, 2032", "Walmart")
+
+        insertItem(1, 8.23, "Weiners")
+        insertItem(1, 5.14, "Buns")
+        insertItem(2, 8.76, "Rubber Gloves")
+        insertItem(2, 5.39, "Pringles")
+        insertItem(2, 2.35, "Sponges")
+        insertItem(2, 4.67, "Moisturizer")
+        insertItem(2, 14.27, "Rubber Bands")
+        insertItem(2, 385.25, "Oculus Quest 2")
+    }
+
+    private fun logDBs(){
         Log.i("Trips", "Getting All Trips:")
-        if(tripsList == null){
+        logTripQuery(getAllTrips())
+        Log.i("Items", "Getting Items For TripId 1:")
+        logItemQuery(getAllItemsForTrip(1))
+        Log.i("Items", "Getting All Items:")
+        logItemQuery(getAllItems())
+    }
+
+    fun logTripQuery(list: ArrayList<Trip>?){
+        if(list == null){
             Log.i("Trips", "Trips list not created")
         }
-        else if(tripsList.size == 0){
+        else if(list.size == 0){
             Log.i("Trips", "Trips List empty")
         }
         else{
-            for(trip in tripsList) {
-                Log.i("Trips", trip.toString())
+            for(data in list) {
+                Log.i("Trips", data.toString())
             }
         }
-        insertItem(1, 400.0, "High End Pipe")
-        insertItem(1, 20.0, "Filters")
-        insertItem(2, 0.69, "Lube Sample")
-        val itemsList = getAllItemsForTrip(1)
-        Log.i("Items", "Getting items for TripId 1")
-        if(itemsList == null){
-            Log.i("Items", "Trips list not created")
+    }
+
+    fun logItemQuery(list: ArrayList<Item>?){
+        if(list == null){
+            Log.i("Items", "Item list not created")
         }
-        else if(itemsList.size == 0){
-            Log.i("Items", "Trips List empty")
+        else if(list.size == 0){
+            Log.i("Items", "Item List empty")
         }
         else{
-            for(item in itemsList) {
-                Log.i("Items", item.toString())
+            for(data in list) {
+                Log.i("Items", data.toString())
             }
         }
-        val itemsList2 = getAllItems()
-        Log.i("Items", "Getting items for All Trips")
-        if(itemsList2 == null){
-            Log.i("Items", "Trips list not created")
-        }
-        else if(itemsList2.size == 0){
-            Log.i("Items", "Trips List empty")
-        }
-        else{
-            for(item in itemsList2) {
-                Log.i("Items", item.toString())
-            }
-        }
+    }
+
+    fun testDBs(){
+        remakeDBs()
+        createTestData()
+        logDBs()
     }
 
     companion object {
