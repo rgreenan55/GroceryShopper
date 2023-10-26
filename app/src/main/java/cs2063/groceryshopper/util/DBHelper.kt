@@ -61,6 +61,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun deleteTrip(id: Int): Int {
         val db = this.writableDatabase
+        db.delete(ITEM_TABLE_NAME, "$ITEM_COLUMN_TRIP_ID = ? ", arrayOf((id).toString()))
         return db.delete(TRIP_TABLE_NAME, "$TRIP_COLUMN_ID = ? ", arrayOf((id).toString()))
     }
 
