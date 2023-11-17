@@ -1,0 +1,4 @@
+#Fri Nov 17 13:34:35 AST 2023
+base.0=C\:\\Users\\kisen\\ocrstuff\\codelab-mlkit-android-master\\codelab-mlkit-android-master\\vision\\final\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

@@ -1,0 +1,15 @@
+com.google.codelab.mlkit.app-core-1.2.0-0 C:\Users\kisen\.gradle\caches\transforms-3\3ad6ab6abbfc07640b19f7de00ec2ec2\transformed\core-1.2.0\res
+com.google.codelab.mlkit.app-jetified-play-services-base-18.1.0-1 C:\Users\kisen\.gradle\caches\transforms-3\3d85e870aae17ae1eea9799ec8b495d7\transformed\jetified-play-services-base-18.1.0\res
+com.google.codelab.mlkit.app-coordinatorlayout-1.0.0-2 C:\Users\kisen\.gradle\caches\transforms-3\4bf8f27d47942b4322ba4e6c2fc24756\transformed\coordinatorlayout-1.0.0\res
+com.google.codelab.mlkit.app-jetified-play-services-basement-18.1.0-3 C:\Users\kisen\.gradle\caches\transforms-3\72bd8b6dfcebec4730b2cbf13e5a8e52\transformed\jetified-play-services-basement-18.1.0\res
+com.google.codelab.mlkit.app-appcompat-1.1.0-4 C:\Users\kisen\.gradle\caches\transforms-3\9b5f214a2419f9f41a1183bbdec9cca6\transformed\appcompat-1.1.0\res
+com.google.codelab.mlkit.app-constraintlayout-1.1.3-5 C:\Users\kisen\.gradle\caches\transforms-3\c9b4c21ad296cef73fa2ad1579813324\transformed\constraintlayout-1.1.3\res
+com.google.codelab.mlkit.app-jetified-appcompat-resources-1.1.0-6 C:\Users\kisen\.gradle\caches\transforms-3\de9fcccf7dcaa93b2e7ffa769f8736a9\transformed\jetified-appcompat-resources-1.1.0\res
+com.google.codelab.mlkit.app-media-1.0.0-7 C:\Users\kisen\.gradle\caches\transforms-3\e45f617097d065c01ff7f22f809e3e66\transformed\media-1.0.0\res
+com.google.codelab.mlkit.app-pngs-8 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\build\generated\res\pngs\debug
+com.google.codelab.mlkit.app-resValues-9 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\build\generated\res\resValues\debug
+com.google.codelab.mlkit.app-mergeDebugResources-10 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.google.codelab.mlkit.app-mergeDebugResources-11 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.google.codelab.mlkit.app-merged_res-12 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\build\intermediates\merged_res\debug
+com.google.codelab.mlkit.app-debug-13 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\src\debug\res
+com.google.codelab.mlkit.app-main-14 C:\Users\kisen\ocrstuff\codelab-mlkit-android-master\codelab-mlkit-android-master\vision\final\app\src\main\res
