@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    //OCR
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
+    
     // Kotlin lang
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
