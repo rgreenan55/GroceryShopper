@@ -16,6 +16,20 @@
 
 package com.android.example.cameraxbasic.fragments
 
+
+//ocr imports
+import android.graphics.ImageDecoder
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import android.graphics.Bitmap;
+
+
+
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.res.Configuration
@@ -72,6 +86,11 @@ typealias LumaListener = (luma: Double) -> Unit
  */
 class CameraFragment : Fragment() {
 
+    //only ocr val
+    private var mSelectedImage: Bitmap? = null
+
+
+    
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
 
     private val fragmentCameraBinding get() = _fragmentCameraBinding!!
@@ -499,6 +518,11 @@ class CameraFragment : Fragment() {
                         val savedUri = output.savedUri
                         Log.d(TAG, "Photo capture succeeded: $savedUri")
 
+                        //OCR
+                        mSelectedImage = ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, savedUri))
+                        runTextRecognition();
+
+
                         // We can only change the foreground Drawable using API level 23+ API
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             // Update the gallery thumbnail with latest picture taken
@@ -664,6 +688,55 @@ class CameraFragment : Fragment() {
         }
     }
 
+    
+    //OCR functions
+
+    private fun runTextRecognition() {
+        val image = InputImage.fromBitmap(mSelectedImage, 0)
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    
+        recognizer.process(image)
+            .addOnSuccessListener { texts ->
+                processTextRecognitionResult(texts)
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
+    }
+
+    private fun processTextRecognitionResult(texts: Text) {
+        val blocks = texts.textBlocks
+        if (blocks.size == 0) {
+            showToast("No text found")
+            return
+        }
+    
+        var display = ""
+        for (i in blocks.indices) {
+            val lines = blocks[i].lines
+            for (j in lines.indices) {
+                val elements = lines[j].elements
+    
+                for (k in elements.indices) {
+                    display += " ${elements[k].text}"
+                }
+    
+                display += "\n"
+            }
+        }
+    
+        Toast.makeText(applicationContext, display, Toast.LENGTH_LONG).show()
+        Log.i("Text Found: $display")
+    }
+    
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
+    }
+
+
+
+
+    
     companion object {
         private const val TAG = "CameraXBasic"
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
