@@ -39,9 +39,7 @@ android {
 }
 
 dependencies {
-    //mod for text recognition
-    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
-
+    
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
