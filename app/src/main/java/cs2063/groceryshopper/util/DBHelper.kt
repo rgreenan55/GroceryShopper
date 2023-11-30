@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import cs2063.groceryshopper.model.Trip
 import android.util.Log
 import cs2063.groceryshopper.model.Item
-import java.util.Objects
 
 class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
 
@@ -150,14 +149,22 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         insertTrip(13.37, "Oct 3, 2032", "Sobey's")
         insertTrip(420.69, "Oct 5, 2032", "Walmart")
 
-        insertItem(1, 8.23, "Weiners")
+        insertItem(1, 8.23, "Hot Dogs")
         insertItem(1, 5.14, "Buns")
-        insertItem(2, 8.76, "Rubber Gloves")
-        insertItem(2, 5.39, "Pringles")
-        insertItem(2, 2.35, "Sponges")
-        insertItem(2, 4.67, "Moisturizer")
-        insertItem(2, 14.27, "Rubber Bands")
-        insertItem(2, 385.25, "Oculus Quest 2")
+
+        insertItem(2, 8.76, "Half Dozen Eggs")
+        insertItem(2, 5.39, "Chocolate")
+        insertItem(2, 2.35, "Apples")
+        insertItem(2, 4.67, "Chips")
+        insertItem(2, 14.27, "Ground Beef")
+        insertItem(2, 20.25, "Chicken")
+        insertItem(2, 12.32, "Ice Cream")
+        insertItem(2, 7.92, "Milk")
+        insertItem(2, 5.52, "Bread")
+        insertItem(2, 8.95, "Peanut Butter")
+        insertItem(2, 18.23, "Paper Towel")
+        insertItem(2, 2.34, "Gum")
+
     }
 
     private fun logDBs(){

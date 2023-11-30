@@ -1,10 +1,8 @@
 package cs2063.groceryshopper
 
-import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
@@ -13,19 +11,30 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import java.time.YearMonth
+import java.util.Locale
 
 class OverallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.overall_view)
 
+        val actionbarString = "Overall View"
+        this.supportActionBar?.title = actionbarString
+        this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val lineChart = setupChart()
         lineChart.data = getData()
         setupXAxis(lineChart)
         setupYAxis(lineChart)
         lineChart.invalidate()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun setupChart() : LineChart {
@@ -41,27 +50,22 @@ class OverallActivity : AppCompatActivity() {
         return lineChart
     }
 
+    // TODO : Get Actual Data
     private fun getData() : LineData {
         // TODO: Get actual data
         val x = ArrayList<Entry>()
         x.add(Entry(0f, 50f))
-        x.add(Entry(1f, 93f))
+        x.add(Entry(1.5f, 93.1235f))
         x.add(Entry(2f, 111f))
         x.add(Entry(3f, 112.2f))
         x.add(Entry(4f, 113.4f))
         x.add(Entry(5f, 120f))
-        x.add(Entry(6f, 84.2f))
-        x.add(Entry(7f, 10.3f))
-        x.add(Entry(8f, 87.2f))
-        x.add(Entry(9f, 83.24f))
-        x.add(Entry(10f, 92.26f))
-        x.add(Entry(11f, 110.4f))
-        x.add(Entry(12f, 190f))
 
-        // TODO: Remove Rounding https://stackoverflow.com/questions/51267312/chart-values-is-rounded-when-present-on-mpandroidchart
         val data = LineDataSet(x, "Trip History")
-        data.lineWidth = 2f
-        data.circleRadius = 4f
+        data.valueFormatter = LabelFormatter()
+        data.lineWidth = 4f
+        data.circleRadius = 8f
+        data.valueTextSize = 12f
 
         val dataSets = ArrayList<ILineDataSet>()
         dataSets.add(data)
@@ -80,7 +84,7 @@ class OverallActivity : AppCompatActivity() {
         xAxis.textColor = Color.BLACK
         xAxis.isEnabled = true
 
-        xAxis.setLabelCount(13, true)
+        xAxis.setLabelCount(6, true)
         xAxis.setDrawGridLines(true)
         xAxis.valueFormatter = MonthFormatter()
     }
@@ -103,8 +107,7 @@ class OverallActivity : AppCompatActivity() {
             val currentMonth = YearMonth.now().monthValue
 
             fun calcMonth(month : Int) : Int {
-                Log.i("Me", "$currentMonth")
-                return (month + (12-currentMonth)) % 12
+                return (month + (5-currentMonth)) % 12
             }
 
             return when (value.toInt()) {
@@ -122,6 +125,12 @@ class OverallActivity : AppCompatActivity() {
                 calcMonth(11) -> "Dec"
                 else -> ""
             }
+        }
+    }
+
+    class LabelFormatter : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            return "$" + "%,.2f".format(Locale.ENGLISH, value)
         }
     }
 }
