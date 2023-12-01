@@ -41,9 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DataTestActivity"
-            android:parentActivityName=".MainActivity">
-        </activity>
     </application>
 
 </manifest>

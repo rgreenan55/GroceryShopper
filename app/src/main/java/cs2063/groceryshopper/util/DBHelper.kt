@@ -8,6 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper
 import cs2063.groceryshopper.model.Trip
 import android.util.Log
 import cs2063.groceryshopper.model.Item
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, 1) {
 
@@ -16,7 +21,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
             "CREATE TABLE $TRIP_TABLE_NAME (" +
                     "$TRIP_COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                     "$TRIP_COLUMN_TOTAL REAL," +
-                    "$TRIP_COLUMN_DATE TEXT," +
+                    "$TRIP_COLUMN_DATE LONG," +
                     "$TRIP_COLUMN_STORE_NAME TEXT);"
         )
         db.execSQL(
@@ -24,7 +29,8 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
                     "$ITEM_COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                     "$ITEM_COLUMN_TRIP_ID INTEGER," +
                     "$ITEM_COLUMN_PRICE REAL," +
-                    "$ITEM_COLUMN_ITEM_NAME TEXT);"
+                    "$ITEM_COLUMN_ITEM_NAME TEXT," +
+                    "$ITEM_COLUMN_ARCHIVED BOOLEAN DEFAULT 0);"
         )
     }
 
@@ -42,7 +48,10 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(TRIP_COLUMN_TOTAL, total)
-        contentValues.put(TRIP_COLUMN_DATE, date)
+        val l = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val unix = l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+        Log.i("Insert Trip", unix.toString())
+        contentValues.put(TRIP_COLUMN_DATE, unix)
         contentValues.put(TRIP_COLUMN_STORE_NAME, storeName)
         db.insert(TRIP_TABLE_NAME, null, contentValues)
         return true
@@ -53,9 +62,11 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val contentValues = ContentValues()
         contentValues.put(TRIP_COLUMN_ID, id)
         contentValues.put(TRIP_COLUMN_TOTAL, total)
-        contentValues.put(TRIP_COLUMN_DATE, date)
+        val l = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val unix = l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+        contentValues.put(TRIP_COLUMN_DATE, unix)
         contentValues.put(TRIP_COLUMN_STORE_NAME, storeName)
-        db.update(TRIP_TABLE_NAME, contentValues, "id = ? ", arrayOf((id).toString()))
+        db.update(TRIP_TABLE_NAME, contentValues, "$TRIP_COLUMN_ID = ? ", arrayOf((id).toString()))
         return true
     }
 
@@ -71,6 +82,19 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return formatTripsList(res)
     }
 
+    fun getAllTripsSortByDate(descending: Boolean): ArrayList<Trip>?{
+        val db = this.readableDatabase
+        val dir = if (descending) "DESC" else "ASC"
+        val res = db.rawQuery("select * from $TRIP_TABLE_NAME ORDER BY $TRIP_COLUMN_DATE $dir", null)
+        return formatTripsList(res)
+    }
+
+    fun getPastMonthsTrips(minDate: Long, maxDate: Long): ArrayList<Trip>?{
+        val db = this.readableDatabase
+        val res = db.rawQuery("select * from $TRIP_TABLE_NAME WHERE $TRIP_COLUMN_DATE > $minDate AND $TRIP_COLUMN_DATE < $maxDate ORDER BY $TRIP_COLUMN_DATE ASC", null)
+        return formatTripsList(res)
+    }
+
     private fun formatTripsList(res: Cursor): ArrayList<Trip>?{
         val output = ArrayList<Trip>()
         res.moveToFirst()
@@ -81,7 +105,9 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         //Log.i("Trips", "idCol: $idCol, totalCol: $totalCol, dateCol: $dateCol, storeNameCol: $storeNameCol")
         if (idCol == -1 || totalCol == -1 || dateCol == -1 || storeNameCol == -1) return null
         while (!res.isAfterLast) {
-            output.add(Trip(res.getInt(idCol), res.getDouble(totalCol), res.getString(dateCol), res.getString(storeNameCol)))
+            Log.i("Read Trip", res.getLong(dateCol).toString())
+            val date = SimpleDateFormat("yyyy-MM-dd").format(Date(res.getLong(dateCol)*1000))
+            output.add(Trip(res.getInt(idCol), res.getDouble(totalCol), date, res.getString(storeNameCol)))
             res.moveToNext()
         }
         //Log.i("Trips", "There are " + output.size + " trips")
@@ -96,6 +122,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         contentValues.put(ITEM_COLUMN_PRICE, price)
         contentValues.put(ITEM_COLUMN_ITEM_NAME, itemName)
         db.insert(ITEM_TABLE_NAME, null, contentValues)
+        db.execSQL("UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL + $price WHERE $TRIP_COLUMN_ID = $tripId")
         return true
     }
 
@@ -106,15 +133,55 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         contentValues.put(ITEM_COLUMN_TRIP_ID, tripId)
         contentValues.put(ITEM_COLUMN_PRICE, price)
         contentValues.put(ITEM_COLUMN_ITEM_NAME, itemName)
-        db.update(ITEM_TABLE_NAME, contentValues, "id = ? ", arrayOf((id).toString()))
+        db.update(ITEM_TABLE_NAME, contentValues, "$ITEM_COLUMN_ID = ? ", arrayOf((id).toString()))
         return true
     }
 
     fun deleteItem(id: Int): Int {
         val db = this.writableDatabase
-        return db.delete(ITEM_TABLE_NAME, "id = ? ", arrayOf((id).toString()))
+        val item = getItem(id)!!
+        val price = item.price
+        val tripId = item.tripId
+        if (!item.archived) {
+            db.execSQL("UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL - $price WHERE $TRIP_COLUMN_ID = $tripId")
+        }
+        return db.delete(ITEM_TABLE_NAME, "$ITEM_COLUMN_ID = ? ", arrayOf((id).toString()))
     }
 
+    fun deleteItem(id: Int, tripId: Int, price: Double, archived: Boolean): Int {
+        val db = this.writableDatabase
+        Log.i("Delete", archived.toString())
+        if (!archived) {
+            db.execSQL("UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL - $price WHERE $TRIP_COLUMN_ID = $tripId")
+        }
+        return db.delete(ITEM_TABLE_NAME, "$ITEM_COLUMN_ID = ? ", arrayOf((id).toString()))
+    }
+
+    fun archiveItem(id: Int){
+        val db = this.writableDatabase
+        val item = getItem(id)!!
+        val tripId = item.tripId
+        val archive = item.archived
+        val price = if (archive) item.price else -item.price
+        db.execSQL("UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL + $price WHERE $TRIP_COLUMN_ID = $tripId")
+        db.execSQL("UPDATE $ITEM_TABLE_NAME SET $ITEM_COLUMN_ARCHIVED = NOT $ITEM_COLUMN_ARCHIVED WHERE $ITEM_COLUMN_ID = $id")
+    }
+
+    fun archiveItem(id : Int, tripId: Int, price: Double, archived: Boolean){
+        val db = this.writableDatabase
+        val addSub = if (archived) '+' else '-'
+        val archive = if (archived) 0 else 1
+        Log.i("Archive", price.toString())
+        Log.i("Archive", "UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL $addSub $price WHERE $TRIP_COLUMN_ID = $tripId")
+        db.execSQL("UPDATE $TRIP_TABLE_NAME SET $TRIP_COLUMN_TOTAL = $TRIP_COLUMN_TOTAL $addSub $price WHERE $TRIP_COLUMN_ID = $tripId")
+        db.execSQL("UPDATE $ITEM_TABLE_NAME SET $ITEM_COLUMN_ARCHIVED = $archive WHERE $ITEM_COLUMN_ID = $id")
+    }
+
+    fun getItem(id: Int): Item{
+        val db = this.readableDatabase
+        val res = db.rawQuery("select * from $ITEM_TABLE_NAME WHERE $ITEM_COLUMN_ID = $id", null)
+        return formatItemList(res)!![0]
+    }
     fun getAllItems(): ArrayList<Item>?{
         val db = this.readableDatabase
         val res = db.rawQuery("select * from $ITEM_TABLE_NAME", null)
@@ -123,7 +190,20 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun getAllItemsForTrip(tripId: Int): ArrayList<Item>?{
         val db = this.readableDatabase
-        val res = db.rawQuery("select * from $ITEM_TABLE_NAME where $ITEM_COLUMN_TRIP_ID = $tripId", null)
+        val res = db.rawQuery("select * from $ITEM_TABLE_NAME where $ITEM_COLUMN_TRIP_ID = $tripId ORDER BY $ITEM_COLUMN_ARCHIVED", null)
+        return formatItemList(res)
+    }
+
+    fun getAllItemsForTripSortByPrice(tripId: Int, descending: Boolean): ArrayList<Item>?{
+        val db = this.readableDatabase
+        val dir = if (descending) "DESC" else "ASC"
+        val res = db.rawQuery("select * from $ITEM_TABLE_NAME where $ITEM_COLUMN_TRIP_ID = $tripId ORDER BY $ITEM_COLUMN_ARCHIVED, $ITEM_COLUMN_PRICE $dir", null)
+        return formatItemList(res)
+    }
+    fun getAllItemsForTripSortByName(tripId: Int, aToZ: Boolean): ArrayList<Item>?{
+        val db = this.readableDatabase
+        val dir = if (aToZ) "ASC" else "DESC"
+        val res = db.rawQuery("select * from $ITEM_TABLE_NAME where $ITEM_COLUMN_TRIP_ID = $tripId ORDER BY $ITEM_COLUMN_ARCHIVED, $ITEM_COLUMN_ITEM_NAME $dir", null)
         return formatItemList(res)
     }
 
@@ -134,10 +214,11 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val tripIdCol = res.getColumnIndex(ITEM_COLUMN_TRIP_ID)
         val priceCol = res.getColumnIndex(ITEM_COLUMN_PRICE)
         val itemNameCol = res.getColumnIndex(ITEM_COLUMN_ITEM_NAME)
+        val archivedCol = res.getColumnIndex(ITEM_COLUMN_ARCHIVED)
         //Log.i("Items", "idCol: $idCol, tripIdCol: $tripIdCol, priceCol: $priceCol, itemNameCol: $itemNameCol")
         if (idCol == -1 || tripIdCol == -1 || priceCol == -1 || itemNameCol == -1) return null
         while (!res.isAfterLast) {
-            output.add(Item(res.getInt(idCol), res.getInt(tripIdCol), res.getDouble(priceCol), res.getString(itemNameCol)))
+            output.add(Item(res.getInt(idCol), res.getInt(tripIdCol), res.getDouble(priceCol), res.getString(itemNameCol), res.getInt(archivedCol) == 1))
             res.moveToNext()
         }
         res.close()
@@ -146,8 +227,9 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     }
 
     private fun createTestData(){
-        insertTrip(13.37, "Oct 3, 2032", "Sobey's")
-        insertTrip(420.69, "Oct 5, 2032", "Walmart")
+        insertTrip(0.0, "2023-10-27", "Sobey's")
+        insertTrip(0.0, "2023-11-01", "Walmart")
+        insertTrip(0.0, "2023-11-03", "Anti-Cancer Store")
 
         insertItem(1, 8.23, "Hot Dogs")
         insertItem(1, 5.14, "Buns")
@@ -163,7 +245,9 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         insertItem(2, 5.52, "Bread")
         insertItem(2, 8.95, "Peanut Butter")
         insertItem(2, 18.23, "Paper Towel")
-        insertItem(2, 2.34, "Gum")
+        insertItem(2, 2.37, "Gum")
+
+        insertItem(3, 1.1, "Anti-Cancer")
 
     }
 
@@ -216,7 +300,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         const val TRIP_TABLE_NAME = "Trips"
         const val TRIP_COLUMN_ID = "tripID"                  // INT
         const val TRIP_COLUMN_TOTAL = "tripTotal"            // NUMBER (Double)
-        const val TRIP_COLUMN_DATE = "tripDate"              // STRING (idk how to have it work if this is a DATE)
+        const val TRIP_COLUMN_DATE = "tripDate"              // LONG
         const val TRIP_COLUMN_STORE_NAME = "storeName"       // STRING
 
         const val ITEM_TABLE_NAME = "Items"
@@ -224,6 +308,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         const val ITEM_COLUMN_TRIP_ID = "tripID"             // INT
         const val ITEM_COLUMN_PRICE = "price"                // NUMBER (Double)
         const val ITEM_COLUMN_ITEM_NAME = "itemName"         // STRING
+        const val ITEM_COLUMN_ARCHIVED = "archived"          // BOOLEAN
     }
 
 }
