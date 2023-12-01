@@ -3,7 +3,6 @@ package cs2063.groceryshopper.util
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import cs2063.groceryshopper.MainActivity
@@ -48,7 +47,6 @@ class ListOfTripsGenerator {
         }
     }
 
-    // TODO: Get actual data
     private fun buildData(trips: ArrayList<Trip>?) : ArrayList<Map<String, String>> {
         val list = ArrayList<Map<String,String>>()
         if(trips == null) return list

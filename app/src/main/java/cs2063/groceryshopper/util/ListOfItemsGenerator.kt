@@ -16,6 +16,8 @@ class ListOfItemsGenerator {
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
                 val items = db.getAllItemsForTrip(tripId)
+//                val items = db.getAllItemsForTripSortByPrice(tripId, descending = true)
+//                val items = db.getAllItemsForTripSortByName(tripId, aToZ = true)
                 val listOfItems = buildData(items)
                 mainHandler.post { updateDisplay(activity, listOfItems) }
             }
@@ -28,8 +30,8 @@ class ListOfItemsGenerator {
             activity,
             listOfItems,
             R.layout.grocery_trip_item,
-            arrayOf("name", "cost", "id"),
-            intArrayOf(R.id.item, R.id.itemCost, R.id.itemId)
+            arrayOf("name", "cost", "id", "archived"),
+            intArrayOf(R.id.item, R.id.itemCost, R.id.itemId, R.id.itemArchived)
         )
         listView.adapter = adapter
     }
@@ -38,16 +40,17 @@ class ListOfItemsGenerator {
         val list = ArrayList<Map<String,String>>()
         if(items == null) return list
         for (item in items) {
-            list.add(putData(item.itemName, item.price.toString(), item.id))
+            list.add(putData(item.itemName, item.price.toString(), item.id, item.archived))
         }
         return list
     }
 
-    private fun putData(name : String, cost : String, id: Int) : HashMap<String, String>{
+    private fun putData(name : String, cost : String, id: Int, archived: Boolean) : HashMap<String, String>{
         val item = HashMap<String, String>()
         item["name"] = name
         item["cost"] = "$cost$"
         item["id"] = id.toString()
+        item["archived"] = archived.toString()
         return item
     }
 }

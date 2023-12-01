@@ -1,9 +1,8 @@
 package cs2063.groceryshopper
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -13,7 +12,14 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import cs2063.groceryshopper.util.DBHelper
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.YearMonth
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
 class OverallActivity : AppCompatActivity() {
@@ -24,9 +30,9 @@ class OverallActivity : AppCompatActivity() {
         val actionbarString = "Overall View"
         this.supportActionBar?.title = actionbarString
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        val db = DBHelper(this)
         val lineChart = setupChart()
-        lineChart.data = getData()
+        lineChart.data = getData(db)
         setupXAxis(lineChart)
         setupYAxis(lineChart)
         lineChart.invalidate()
@@ -50,17 +56,37 @@ class OverallActivity : AppCompatActivity() {
         return lineChart
     }
 
-    // TODO : Get Actual Data
-    private fun getData() : LineData {
-        // TODO: Get actual data
-        val x = ArrayList<Entry>()
-        x.add(Entry(0f, 50f))
-        x.add(Entry(1.5f, 93.1235f))
-        x.add(Entry(2f, 111f))
-        x.add(Entry(3f, 112.2f))
-        x.add(Entry(4f, 113.4f))
-        x.add(Entry(5f, 120f))
+    private fun getData(db: DBHelper) : LineData {
 
+        val months = 6
+        val now = LocalDateTime.now()
+        val firstDayOfMonth = now
+            .with(TemporalAdjusters.firstDayOfMonth())
+            .with(LocalTime.MIN)
+
+        val epochTime = firstDayOfMonth.atZone(ZoneId.systemDefault()).toEpochSecond()
+        val maxEpoch = epochTime+2592000
+        val minEpoch = epochTime-(months-2)*2592000
+
+        val trips = db.getPastMonthsTrips(minEpoch, maxEpoch)
+
+        val x = ArrayList<Entry>()
+//        x.add(Entry(0f, 50f))
+//        x.add(Entry(1.5f, 93.1235f))
+//        x.add(Entry(2f, 111f))
+//        x.add(Entry(3f, 112.2f))
+//        x.add(Entry(4f, 113.4f))
+//        x.add(Entry(5f, 120f))
+        if (trips != null) {
+            for(trip in trips){
+                val l = LocalDate.parse(trip.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val unix = l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+                val location = (unix-minEpoch).toFloat()/2592000.0f
+                val total = trip.total.toFloat()
+                Log.i("Graph", "Location: $location, total: $total")
+                x.add(Entry(location, total))
+            }
+        }
         val data = LineDataSet(x, "Trip History")
         data.valueFormatter = LabelFormatter()
         data.lineWidth = 4f
@@ -102,7 +128,7 @@ class OverallActivity : AppCompatActivity() {
     }
 
     class MonthFormatter : IndexAxisValueFormatter() {
-        @RequiresApi(Build.VERSION_CODES.O)
+
         override fun getFormattedValue(value : Float): String {
             val currentMonth = YearMonth.now().monthValue
 
