@@ -33,9 +33,11 @@ class MainActivity : AppCompatActivity() {
         val newTripButton = findViewById<FloatingActionButton>(R.id.newTrip)
         newTripButton.setOnClickListener {
             // TODO: Add Functionality for adding new Trip
-            Toast.makeText(this, "New Trip Created", Toast.LENGTH_SHORT).show()
-            db.testDBs()
-            listOfTripsGenerator.generateList(this, db)
+//            Toast.makeText(this, "New Trip Created", Toast.LENGTH_SHORT).show()
+//            db.testDBs()
+//            listOfTripsGenerator.generateList(this, db)
+            val intent = Intent(this@MainActivity, OCRActivity::class.java)
+            startActivity(intent)
         }
     }
 
