@@ -8,24 +8,42 @@
     android:paddingVertical="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/dateTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
-    <ListView
-        android:id="@+id/tripList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="50dp"
-        android:divider="@null"
-        android:listSelector="@android:color/transparent"
-        />
+        <TextView
+            android:id="@+id/dateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/sorter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginBottom="16dp"
+            android:spinnerMode="dropdown"
+            android:overlapAnchor="false"
+            android:background="@drawable/custom_spinner"
+            />
+
+        <ListView
+            android:id="@+id/tripList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:paddingBottom="80dp"
+            android:listSelector="@android:color/transparent"
+            />
+    </LinearLayout>
 
     <Button
         android:id="@+id/deleteTrip"

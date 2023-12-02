@@ -115,7 +115,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return output
     }
 
-    fun insertItem(tripId: Int, price: Double, itemName: String): Boolean {
+    private fun insertItem(tripId: Int, price: Double, itemName: String): Boolean {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(ITEM_COLUMN_TRIP_ID, tripId)
@@ -229,7 +229,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     private fun createTestData(){
         insertTrip(0.0, "2023-10-27", "Sobey's")
         insertTrip(0.0, "2023-11-01", "Walmart")
-        insertTrip(0.0, "2023-11-03", "Anti-Cancer Store")
+        insertTrip(0.0, "2023-11-03", "Superstore")
 
         insertItem(1, 8.23, "Hot Dogs")
         insertItem(1, 5.14, "Buns")
@@ -247,7 +247,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         insertItem(2, 18.23, "Paper Towel")
         insertItem(2, 2.37, "Gum")
 
-        insertItem(3, 1.1, "Anti-Cancer")
+        insertItem(3, 1.1, "Vitamins")
 
     }
 

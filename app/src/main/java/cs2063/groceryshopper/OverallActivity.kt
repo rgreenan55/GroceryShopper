@@ -70,13 +70,7 @@ class OverallActivity : AppCompatActivity() {
 
         val trips = db.getPastMonthsTrips(minEpoch, maxEpoch)
 
-        val x = ArrayList<Entry>()
-//        x.add(Entry(0f, 50f))
-//        x.add(Entry(1.5f, 93.1235f))
-//        x.add(Entry(2f, 111f))
-//        x.add(Entry(3f, 112.2f))
-//        x.add(Entry(4f, 113.4f))
-//        x.add(Entry(5f, 120f))
+        val graphEntries = ArrayList<Entry>()
         if (trips != null) {
             for(trip in trips){
                 val l = LocalDate.parse(trip.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -84,10 +78,11 @@ class OverallActivity : AppCompatActivity() {
                 val location = (unix-minEpoch).toFloat()/2592000.0f
                 val total = trip.total.toFloat()
                 Log.i("Graph", "Location: $location, total: $total")
-                x.add(Entry(location, total))
+                graphEntries.add(Entry(location, total))
             }
         }
-        val data = LineDataSet(x, "Trip History")
+
+        val data = LineDataSet(graphEntries, "Trip History")
         data.valueFormatter = LabelFormatter()
         data.lineWidth = 4f
         data.circleRadius = 8f
@@ -109,6 +104,9 @@ class OverallActivity : AppCompatActivity() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.textColor = Color.BLACK
         xAxis.isEnabled = true
+
+        xAxis.axisMinimum = 0f
+        xAxis.axisMaximum = 5f
 
         xAxis.setLabelCount(6, true)
         xAxis.setDrawGridLines(true)
