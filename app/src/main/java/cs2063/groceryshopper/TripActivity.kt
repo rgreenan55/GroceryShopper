@@ -25,6 +25,8 @@ import java.util.concurrent.Executors
 class TripActivity : AppCompatActivity() {
 
     private var tripPriceTotal: Double = 0.0
+    private lateinit var dbGlobal: DBHelper
+    private var tripIdGlobal: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +51,9 @@ class TripActivity : AppCompatActivity() {
         val database = DBHelper(this)
         val extras: Bundle? = intent.extras
         val tripId : Int = extras?.getInt("tripId") ?: 0
+
+        dbGlobal = database
+        tripIdGlobal = tripId
 
         setUpList(database, tripId)
 
@@ -130,7 +135,7 @@ class TripActivity : AppCompatActivity() {
 
     // TODO: BEN -> Figure out how to recall Database
     private fun updateList() {
-
+        setUpList(dbGlobal, tripIdGlobal)
     }
 
     // Back Arrows sends to previous activity
