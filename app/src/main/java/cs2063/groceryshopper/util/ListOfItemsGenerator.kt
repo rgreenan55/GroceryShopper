@@ -21,8 +21,6 @@ import java.util.concurrent.Executors
 
 class ListOfItemsGenerator {
     fun generateList(activity : TripActivity, db: DBHelper, tripId: Int) {
-
-        // TODO: BEN -> Might not need to be here?
         val spinner : Spinner = activity.findViewById<Spinner>(R.id.sorter)
         val sortOption : String = spinner.selectedItem.toString()
 

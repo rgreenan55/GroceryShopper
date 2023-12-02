@@ -133,7 +133,6 @@ class TripActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: BEN -> Figure out how to recall Database
     private fun updateList() {
         setUpList(dbGlobal, tripIdGlobal)
     }
@@ -161,7 +160,6 @@ class TripActivity : AppCompatActivity() {
 
     inner class Listener() : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-            // TODO: BEN -> Figure out how to recall Database
             updateList()
         }
         override fun onNothingSelected(arg0: AdapterView<*>?) {}
