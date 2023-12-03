@@ -9,6 +9,7 @@ import cs2063.groceryshopper.MainActivity
 import cs2063.groceryshopper.R
 import cs2063.groceryshopper.TripActivity
 import cs2063.groceryshopper.model.Trip
+import java.util.Locale
 import java.util.concurrent.Executors
 
 class ListOfTripsGenerator {
@@ -51,15 +52,15 @@ class ListOfTripsGenerator {
         val list = ArrayList<Map<String,String>>()
         if(trips == null) return list
         for (trip in trips) {
-            list.add(putData(trip.date, trip.total.toString()))
+            list.add(putData(trip.date, trip.total))
         }
         return list
     }
 
-    private fun putData(date : String, cost : String) : HashMap<String, String>{
+    private fun putData(date : String, cost : Double) : HashMap<String, String>{
         val item = HashMap<String, String>()
         item["date"] = date
-        item["cost"] = "$cost$"
+        item["cost"] = "%,.2f".format(Locale.ENGLISH, cost) + "$"
         return item
     }
 }

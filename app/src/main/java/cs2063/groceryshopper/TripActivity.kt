@@ -5,22 +5,29 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout.LayoutParams
 import android.widget.ListView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import cs2063.groceryshopper.util.DBHelper
 import cs2063.groceryshopper.util.ListOfItemsGenerator
+import java.util.Locale
 import java.util.concurrent.Executors
 
 
 class TripActivity : AppCompatActivity() {
 
-    var tripPriceTotal: Double = 0.0
+    private var tripPriceTotal: Double = 0.0
+    private lateinit var dbGlobal: DBHelper
+    private var tripIdGlobal: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.trip_view)
@@ -33,16 +40,22 @@ class TripActivity : AppCompatActivity() {
         // Update Titles
         val title = this.findViewById<TextView>(R.id.dateTitle)
         val actionbarString = intent.extras?.getString("storeName") + "  |  " + intent.extras?.getString("date")
-        val titleString = "Total Spent: $tripPriceTotal$"
+        val titleString = "Total Spent: " + "%,.2f".format(Locale.ENGLISH, tripPriceTotal) + "$"
         this.supportActionBar?.title = actionbarString
         title.text = titleString
 
+        // Setup Dropdown
+        setupSpinner()
+
         // Get Trip ID and Connect to DB
-        val db = DBHelper(this)
+        val database = DBHelper(this)
         val extras: Bundle? = intent.extras
         val tripId : Int = extras?.getInt("tripId") ?: 0
 
-        setUpList(db, tripId)
+        dbGlobal = database
+        tripIdGlobal = tripId
+
+        setUpList(database, tripId)
 
         // Setup Delete Trip Button
         val deleteButton = this.findViewById<Button>(R.id.deleteTrip)
@@ -52,25 +65,23 @@ class TripActivity : AppCompatActivity() {
             builder.setTitle("Delete Trip")
             builder.setMessage("Are you sure you want to delete this trip?")
             builder.setCancelable(false)
-            builder.setPositiveButton("Yes") { _, _-> deleteTrip(db, tripId) }
+            builder.setPositiveButton("Yes") { _, _-> deleteTrip(database, tripId) }
             builder.setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
             val alert = builder.create()
             alert.show()
         }
     }
 
-    fun setUpList(db: DBHelper, tripId: Int){
+    private fun setUpList(db: DBHelper, tripId: Int){
         // Generate List of Items from DB
         val listOfItemsGenerator = ListOfItemsGenerator()
         listOfItemsGenerator.generateList(this, db, tripId)
 
-
         // Setup Archive / Delete for Items
         val listView : ListView = this.findViewById(R.id.tripList)
-        listView.onItemLongClickListener = OnItemLongClickListener { _, item: View, pos: Int, _ ->
+        listView.onItemLongClickListener = OnItemLongClickListener { _, item: View, _: Int, _ ->
 
             // Get Item Id for Database
-            //val item : View = listView.getChildAt(pos)
             val itemIdTV : TextView? = item.findViewById<TextView>(R.id.itemId)
             val itemTV : TextView? = item.findViewById<TextView>(R.id.item)
             val itemPriceTV : TextView? = item.findViewById<TextView>(R.id.itemCost)
@@ -80,7 +91,6 @@ class TripActivity : AppCompatActivity() {
             val itemId : Int = (itemIdTV!!.text as String).toInt()
             val itemPrice : Double = (itemPriceTV!!.text as String).dropLast(1).toDouble()
             val itemArchived : Boolean = (itemArchivedTV!!.text as String).toBoolean()
-            Log.i("TRIP", itemPrice.toString())
 
             // Build Dialog
             val builder = AlertDialog.Builder(this@TripActivity)
@@ -123,14 +133,36 @@ class TripActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateList() {
+        setUpList(dbGlobal, tripIdGlobal)
+    }
+
     // Back Arrows sends to previous activity
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun setupSpinner() {
+        val spinner : Spinner = this.findViewById<Spinner>(R.id.sorter)
+        spinner.onItemSelectedListener = Listener()
+
+        val sortOptions = ArrayList<String>()
+        sortOptions.add("Default")
+        sortOptions.add("Name")
+        sortOptions.add("Price")
+
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sortOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner.adapter = adapter
+    }
+
+    inner class Listener() : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            updateList()
+        }
+        override fun onNothingSelected(arg0: AdapterView<*>?) {}
     }
 
     private fun deleteTrip(db: DBHelper, tripId: Int){
@@ -146,19 +178,16 @@ class TripActivity : AppCompatActivity() {
     }
 
     private fun archiveItem(db: DBHelper, itemId : Int, tripId: Int, price: Double, archived: Boolean, itemView: View) {
-        Log.i("Archive", "ArchiveItem")
-
         Executors.newSingleThreadExecutor()
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
                 db.archiveItem(itemId, tripId, price, archived)
                 mainHandler.post {
                     Toast.makeText(this, if (archived) "Item Unarchived" else "Item Archived", Toast.LENGTH_SHORT).show()
-                    setUpList(db, tripId)
                     tripPriceTotal += if (archived) price else -price
-                    this.findViewById<TextView>(R.id.dateTitle).text = "Total Spent: $tripPriceTotal$"
+                    this.findViewById<TextView>(R.id.dateTitle).text = "Total Spent: " + "%,.2f".format(Locale.ENGLISH, tripPriceTotal) + "$"
                     itemView.findViewById<TextView>(R.id.itemArchived).text = (!archived).toString()
-                    // TODO: Visually Mark Item as Archived
+                    setUpList(db, tripId)
                 }
             }
 
