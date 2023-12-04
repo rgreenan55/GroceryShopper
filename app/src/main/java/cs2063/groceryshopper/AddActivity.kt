@@ -131,24 +131,36 @@ class AddActivity : AppCompatActivity() {
 
                 // Todo: Verify all the input fields are valid before adding anything to the DB
 
-                val storeName = this.findViewById<EditText>(R.id.storeName).text.toString()
-                val date = this.findViewById<EditText>(R.id.date).text.toString()
-                val newTripId = db.getTripFromRowId(db.insertTrip(0.0, date, storeName))
+                val dateEditText = findViewById<EditText>(R.id.date)
 
-                val itemsListView = this.findViewById<ListView>(R.id.editorsList)
-                for (i in 0..<itemsListView!!.childCount){
-                    val item: RelativeLayout = itemsListView?.getChildAt(i) as RelativeLayout
-                    val itemName = item.findViewById<EditText>(R.id.name_edit_text).text.toString()
-                    val price = item.findViewById<EditText>(R.id.price_edit_text).text.toString().toDouble()
-                    db.insertItem(newTripId, price, itemName)
+                val datePattern = Pattern.compile("[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]")
+                val dateMatcher = datePattern.matcher(dateEditText.text)
+
+                if (!dateMatcher.matches()) {
+                    mainHandler.post {
+                        Toast.makeText(this, "Please Enter A Valid Date", Toast.LENGTH_LONG).show()
+                    }
                 }
+                else{
+                    val storeName = this.findViewById<EditText>(R.id.storeName).text.toString()
+                    val date = this.findViewById<EditText>(R.id.date).text.toString()
+                    val newTripId = db.getTripFromRowId(db.insertTrip(0.0, date, storeName))
 
-                mainHandler.post {
-                    Toast.makeText(this, "Trip Added", Toast.LENGTH_SHORT).show()
-                    // ToDo: Remove the OCR Activities from the back button stack or whatever its called
-                    // finish()
-                    val intent = Intent(this@AddActivity, MainActivity::class.java)
-                    startActivity(intent)
+                    val itemsListView = this.findViewById<ListView>(R.id.editorsList)
+                    for (i in 0..<itemsListView!!.childCount){
+                        val item: RelativeLayout = itemsListView?.getChildAt(i) as RelativeLayout
+                        val itemName = item.findViewById<EditText>(R.id.name_edit_text).text.toString()
+                        val price = item.findViewById<EditText>(R.id.price_edit_text).text.toString().toDouble()
+                        db.insertItem(newTripId, price, itemName)
+                    }
+
+                    mainHandler.post {
+                        Toast.makeText(this, "Trip Added", Toast.LENGTH_SHORT).show()
+                        // ToDo: Remove the OCR Activities from the back button stack or whatever its called
+                        // finish()
+                        val intent = Intent(this@AddActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
             }
     }
