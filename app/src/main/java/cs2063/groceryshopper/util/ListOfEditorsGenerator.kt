@@ -5,10 +5,13 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.SimpleAdapter
@@ -23,10 +26,10 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 var activityGlobal : Activity? = null
-var itemDetailsGlobal: ArrayList<List<String>>? = null
+var itemDetailsGlobal: ArrayList<ArrayList<String>>? = null
 
 class ListOfEditorsGenerator {
-    fun generateList(activity : Activity, itemDetails: ArrayList<List<String>>) {
+    fun generateList(activity : Activity, itemDetails: ArrayList<ArrayList<String>>) {
         activityGlobal = activity
         itemDetailsGlobal = itemDetails
         Executors.newSingleThreadExecutor()
@@ -53,7 +56,7 @@ class ListOfEditorsGenerator {
         listView.adapter = adapter
     }
 
-    private fun buildData(itemDetails: ArrayList<List<String>>) : ArrayList<Map<String, String>> {
+    private fun buildData(itemDetails: ArrayList<ArrayList<String>>) : ArrayList<Map<String, String>> {
         val list = ArrayList<Map<String,String>>()
         // ToDo: Read the items from the OCR Text
         //      My suggestion here is to look at each line and any line with a price it
@@ -88,11 +91,18 @@ class MyEditorsAdapter(
         val deleteButton : Button = view.findViewById<Button>(R.id.deleteEditor)
         deleteButton.setOnClickListener {
             Log.i("Hello", "Hello")
+
+            for (i in 0..<parent!!.childCount){
+                val item: RelativeLayout = parent?.getChildAt(i) as RelativeLayout
+                val itemName = item.findViewById<EditText>(R.id.name_edit_text).text.toString()
+                val price = item.findViewById<EditText>(R.id.price_edit_text).text.toString().toDouble()
+                itemDetailsGlobal?.get(i)?.set(0, itemName)
+                itemDetailsGlobal?.get(i)?.set(1, price.toString())
+            }
             itemDetailsGlobal!!.removeAt(position)
             val listOfEditorsGenerator = ListOfEditorsGenerator()
             listOfEditorsGenerator.generateList(activityGlobal!!, itemDetailsGlobal!!)
         }
-
         return view
     }
 }

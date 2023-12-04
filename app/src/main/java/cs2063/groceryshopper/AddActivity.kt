@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import cs2063.groceryshopper.util.DBHelper
 import cs2063.groceryshopper.util.ListOfEditorsGenerator
 import cs2063.groceryshopper.util.ListOfItemsGenerator
+import cs2063.groceryshopper.util.itemDetailsGlobal
 import java.util.ArrayList
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -32,7 +33,7 @@ import java.util.regex.Pattern
 class AddActivity : AppCompatActivity() {
 
     private lateinit var dbGlobal: DBHelper
-    private lateinit var itemsListGlobal: ArrayList<List<String>>
+    private lateinit var itemsListGlobal: ArrayList<ArrayList<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,13 +75,21 @@ class AddActivity : AppCompatActivity() {
         }
         val addItemButton = this.findViewById<Button>(R.id.addItem)
         addItemButton.setOnClickListener {
-            itemsListGlobal.add(listOf("", "0.0"))
+            val itemsListView = this.findViewById<ListView>(R.id.editorsList)
+            for (i in 0..<itemsListView!!.childCount){
+                val item: RelativeLayout = itemsListView?.getChildAt(i) as RelativeLayout
+                val itemName = item.findViewById<EditText>(R.id.name_edit_text).text.toString()
+                val price = item.findViewById<EditText>(R.id.price_edit_text).text.toString().toDouble()
+                itemDetailsGlobal?.get(i)?.set(0, itemName)
+                itemDetailsGlobal?.get(i)?.set(1, price.toString())
+            }
+            itemsListGlobal.add(arrayListOf("", "0.0"))
             setUpList(database, itemsListGlobal)
         }
     }
 
-    private fun analizeOCRString(rawText: String): ArrayList<List<String>>{
-        val items = ArrayList<List<String>>()
+    private fun analizeOCRString(rawText: String): ArrayList<ArrayList<String>>{
+        val items = ArrayList<ArrayList<String>>()
         val lines = rawText.split('\n')
         val pat = Pattern.compile("(.*?)([0-9, ]*[., ]*[,.][., ]*[0-9][0-9])(.*)")
         for (line in lines){
@@ -88,7 +97,7 @@ class AddActivity : AppCompatActivity() {
             if(matcher.matches()){
                 val name = matcher.group(1) + matcher.group(3)
                 val price = cleanPrice(matcher.group(2))
-                items.add(listOf(name, price))
+                items.add(arrayListOf(name, price))
             }
         }
         return items
@@ -99,7 +108,7 @@ class AddActivity : AppCompatActivity() {
         return output.substring(0, output.length-2) + "." + output.substring(output.length-2)
     }
 
-    private fun setUpList(db: DBHelper, itemDetails: ArrayList<List<String>>){
+    private fun setUpList(db: DBHelper, itemDetails: ArrayList<ArrayList<String>>){
         // Generate List of Items from DB
         val listOfEditorsGenerator = ListOfEditorsGenerator()
         listOfEditorsGenerator.generateList(this, itemDetails)
