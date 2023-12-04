@@ -21,12 +21,12 @@ import java.util.concurrent.Executors
 
 
 class ListOfEditorsGenerator {
-    fun generateList(activity : Activity, db: DBHelper, rawText: String) {
+    fun generateList(activity : Activity, db: DBHelper, itemDetails: ArrayList<List<String>>) {
 
         Executors.newSingleThreadExecutor()
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
-                val listOfItems = buildData(rawText)
+                val listOfItems = buildData(itemDetails)
                 mainHandler.post { updateDisplay(activity, listOfItems) }
             }
     }
@@ -44,22 +44,29 @@ class ListOfEditorsGenerator {
         listView.adapter = adapter
     }
 
-    private fun buildData(rawText: String) : ArrayList<Map<String, String>> {
+    private fun buildData(itemDetails: ArrayList<List<String>>) : ArrayList<Map<String, String>> {
         val list = ArrayList<Map<String,String>>()
         // ToDo: Read the items from the OCR Text
         //      My suggestion here is to look at each line and any line with a price it
         //      in we assume is an item and we take the item and all the text from that
         //      line and put it in the editor area. Then the user can do the final clean up
-        list.add(putData("Apple", 5.99))
-        list.add(putData("Banana", 3.99))
-        list.add(putData("Pear", 2.49))
+        if(itemDetails.size == 0) {
+            list.add(putData("Apple", "5.99"))
+            list.add(putData("Banana", "3.99"))
+            list.add(putData("Pear", "2.49"))
+        }
+        else{
+            for(details in itemDetails){
+                list.add(putData(details[0], details[1]))
+            }
+        }
         return list
     }
 
-    private fun putData(name : String, cost : Double) : HashMap<String, String>{
+    private fun putData(name : String, cost : String) : HashMap<String, String>{
         val item = HashMap<String, String>()
         item["name"] = name
-        item["cost"] = "%,.2f".format(Locale.ENGLISH, cost)
+        item["cost"] = "%,.2f".format(Locale.ENGLISH, cost.toDouble())
         return item
     }
 }

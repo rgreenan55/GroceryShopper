@@ -22,16 +22,17 @@ import androidx.appcompat.app.AppCompatActivity
 import cs2063.groceryshopper.util.DBHelper
 import cs2063.groceryshopper.util.ListOfEditorsGenerator
 import cs2063.groceryshopper.util.ListOfItemsGenerator
+import java.util.ArrayList
 import java.util.Locale
 import java.util.concurrent.Executors
+import java.util.regex.Pattern
 
 // ToDo: Clean this file up
 
 class AddActivity : AppCompatActivity() {
 
-    private var tripPriceTotal: Double = 0.0
     private lateinit var dbGlobal: DBHelper
-    private var tripIdGlobal: Int = 0
+    private lateinit var itemsListGlobal: ArrayList<List<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class AddActivity : AppCompatActivity() {
         // Setup Back Button
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        tripPriceTotal = intent.extras?.getDouble("total")!!
+//        tripPriceTotal = intent.extras?.getDouble("total")!!
 
         // ToDo: Fix title bar (not sure what to put there)
         // Update Titles
@@ -59,13 +60,14 @@ class AddActivity : AppCompatActivity() {
         val tripId : Int = extras?.getInt("tripId") ?: 0
 
         dbGlobal = database
-        tripIdGlobal = tripId
 
 
         // ToDo: Grab the ORC text from that activity
-        val rawText = "Grab this from the OCR activity through the extras"
+        val rawText = extras!!.getString("OCR")!!
 
-        setUpList(database, rawText)
+        itemsListGlobal = analizeOCRString(rawText)
+
+        setUpList(database, itemsListGlobal)
 
 //         Setup Add Trip Button
         val addTripButton = this.findViewById<Button>(R.id.addTrip)
@@ -90,11 +92,31 @@ class AddActivity : AppCompatActivity() {
 //            editors.addView(this.findViewById(R.id.itemAddCard))
         }
     }
-//
-    private fun setUpList(db: DBHelper, rawText: String){
+
+    fun analizeOCRString(rawText: String): ArrayList<List<String>>{
+        val items = ArrayList<List<String>>()
+        val lines = rawText.split('\n')
+        val pat = Pattern.compile("(.*?)([0-9, ]*[., ]*[,.][., ]*[0-9][0-9])(.*)")
+        for (line in lines){
+            val matcher = pat.matcher(line)
+            if(matcher.matches()){
+                val name = matcher.group(1) + matcher.group(3)
+                val price = cleanPrice(matcher.group(2))
+                items.add(listOf(name, price))
+            }
+        }
+        return items
+    }
+
+    fun cleanPrice(str: String): String{
+        var output = str.replace("\\s+".toRegex(),"").replace("[,]".toRegex(),"").replace("[.]".toRegex(),"")
+        return output.substring(0, output.length-2) + "." + output.substring(output.length-2)
+    }
+
+    private fun setUpList(db: DBHelper, itemDetails: ArrayList<List<String>>){
         // Generate List of Items from DB
         val listOfEditorsGenerator = ListOfEditorsGenerator()
-        listOfEditorsGenerator.generateList(this, db, rawText)
+        listOfEditorsGenerator.generateList(this, db, itemDetails)
 
 //        // Setup Archive / Delete for Items
 //        val listView : ListView = this.findViewById(R.id.tripList)
@@ -107,11 +129,11 @@ class AddActivity : AppCompatActivity() {
 //        setUpList(dbGlobal, tripIdGlobal)
 //    }
 //
-//    // Back Arrows sends to previous activity
-//    override fun onSupportNavigateUp(): Boolean {
-//        finish()
-//        return true
-//    }
+    // Back Arrows sends to previous activity
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
 //
 //    private fun setupSpinner() {
 //        val spinner : Spinner = this.findViewById<Spinner>(R.id.sorter)
