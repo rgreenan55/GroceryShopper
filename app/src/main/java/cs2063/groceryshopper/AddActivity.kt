@@ -85,6 +85,10 @@ class AddActivity : AppCompatActivity() {
             }
             itemsListGlobal.add(arrayListOf("", "0.0"))
             setUpList(database, itemsListGlobal)
+            addItemButton.isEnabled = false
+            Handler(Looper.getMainLooper()).postDelayed({
+                    addItemButton.isEnabled = true
+            }, 250);
         }
     }
 

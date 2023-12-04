@@ -93,7 +93,7 @@ class OCRActivity : AppCompatActivity() {
 
         recognizer.process(img)
             .addOnSuccessListener { visionText ->
-                Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
                 Log.i("Tag", visionText.text)
                 val intent = Intent(this@OCRActivity, AddActivity::class.java)
                 intent.apply {
