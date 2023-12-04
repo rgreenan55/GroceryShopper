@@ -40,19 +40,9 @@ class AddActivity : AppCompatActivity() {
 
         // Setup Back Button
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val actionbarString = "Edit Recipt Details"
+        this.supportActionBar?.title = actionbarString
 
-//        tripPriceTotal = intent.extras?.getDouble("total")!!
-
-        // ToDo: Fix title bar (not sure what to put there)
-        // Update Titles
-//        val title = this.findViewById<TextView>(R.id.dateTitle)
-//        val actionbarString = intent.extras?.getString("storeName") + "  |  " + intent.extras?.getString("date")
-//        val titleString = "Total Spent: " + "%,.2f".format(Locale.ENGLISH, tripPriceTotal) + "$"
-//        this.supportActionBar?.title = actionbarString
-//        title.text = titleString
-
-        // Setup Dropdown
-//        setupSpinner()
 
         // Get Trip ID and Connect to DB
         val database = DBHelper(this)
@@ -84,14 +74,12 @@ class AddActivity : AppCompatActivity() {
         }
         val addItemButton = this.findViewById<Button>(R.id.addItem)
         addItemButton.setOnClickListener {
-            // ToDo: Have this button add a blank entry to the list
-
             itemsListGlobal.add(listOf("", "0.0"))
             setUpList(database, itemsListGlobal)
         }
     }
 
-    fun analizeOCRString(rawText: String): ArrayList<List<String>>{
+    private fun analizeOCRString(rawText: String): ArrayList<List<String>>{
         val items = ArrayList<List<String>>()
         val lines = rawText.split('\n')
         val pat = Pattern.compile("(.*?)([0-9, ]*[., ]*[,.][., ]*[0-9][0-9])(.*)")
@@ -106,72 +94,27 @@ class AddActivity : AppCompatActivity() {
         return items
     }
 
-    fun cleanPrice(str: String): String{
+    private fun cleanPrice(str: String): String{
         var output = str.replace("\\s+".toRegex(),"").replace("[,]".toRegex(),"").replace("[.]".toRegex(),"")
         return output.substring(0, output.length-2) + "." + output.substring(output.length-2)
-    }
-
-    fun addFunctionToDeleteButton(){
-        Log.i("Delete Item", "Callback ran")
-        val itemsListView: ListView = this.findViewById(R.id.editorsList)
-        for (i in 0..<itemsListView!!.childCount) {
-            Log.i("Delete Item", "Setting up Delete Button index: $i")
-            val item: RelativeLayout = itemsListView?.getChildAt(i) as RelativeLayout
-            val deleteButton = item.findViewById<Button>(R.id.deleteEditor)
-            deleteButton.setOnClickListener {
-                Log.i("Delete Item", "Delete index: $i")
-                itemsListGlobal.removeAt(i);
-                setUpList(dbGlobal, itemsListGlobal)
-            }
-        }
     }
 
     private fun setUpList(db: DBHelper, itemDetails: ArrayList<List<String>>){
         // Generate List of Items from DB
         val listOfEditorsGenerator = ListOfEditorsGenerator()
-        listOfEditorsGenerator.generateList(this, db, itemDetails) { addFunctionToDeleteButton() } // Running the function here causes it to be ran on nothing
-
-//        // Setup Archive / Delete for Items
-          // ToDo: Add the delete functionality to all the rows 
-          // (idk if it would be here or in the list generator, 
-          // i assume here as you would want to remove it from 
-          // a list in this activity)
-        // Note: running the function here causes it to be ran on the old list
-        addFunctionToDeleteButton()
+        listOfEditorsGenerator.generateList(this, itemDetails)
     }
-//
+
 //    private fun updateList() {
 //        setUpList(dbGlobal, tripIdGlobal)
 //    }
-//
+
     // Back Arrows sends to previous activity
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
     }
-//
-//    private fun setupSpinner() {
-//        val spinner : Spinner = this.findViewById<Spinner>(R.id.sorter)
-//        spinner.onItemSelectedListener = Listener()
-//
-//        val sortOptions = ArrayList<String>()
-//        sortOptions.add("Default")
-//        sortOptions.add("Name")
-//        sortOptions.add("Price")
-//
-//        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sortOptions)
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//
-//        spinner.adapter = adapter
-//    }
-//
-//    inner class Listener() : AdapterView.OnItemSelectedListener {
-//        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-//            updateList()
-//        }
-//        override fun onNothingSelected(arg0: AdapterView<*>?) {}
-//    }
-//
+
     private fun addTrip(db: DBHelper){
         Executors.newSingleThreadExecutor()
             .execute {
@@ -200,38 +143,4 @@ class AddActivity : AppCompatActivity() {
                 }
             }
     }
-//
-//    private fun archiveItem(db: DBHelper, itemId : Int, tripId: Int, price: Double, archived: Boolean, itemView: View) {
-//        Executors.newSingleThreadExecutor()
-//            .execute {
-//                val mainHandler = Handler(Looper.getMainLooper())
-//                db.archiveItem(itemId, tripId, price, archived)
-//                mainHandler.post {
-//                    Toast.makeText(this, if (archived) "Item Unarchived" else "Item Archived", Toast.LENGTH_SHORT).show()
-//                    tripPriceTotal += if (archived) price else -price
-//                    this.findViewById<TextView>(R.id.dateTitle).text = "Total Spent: " + "%,.2f".format(Locale.ENGLISH, tripPriceTotal) + "$"
-//                    itemView.findViewById<TextView>(R.id.itemArchived).text = (!archived).toString()
-//                    setUpList(db, tripId)
-//                }
-//            }
-//
-//    }
-//
-//    private fun deleteItem(db: DBHelper, itemId : Int, tripId: Int, price: Double, archived: Boolean) {
-//        Log.i("Delete", "DeleteItem")
-//
-//        Executors.newSingleThreadExecutor()
-//            .execute {
-//                val mainHandler = Handler(Looper.getMainLooper())
-//                db.deleteItem(itemId, tripId, price, archived)
-//                mainHandler.post {
-//                    Toast.makeText(this, "Item Deleted", Toast.LENGTH_SHORT).show()
-//                    setUpList(db, tripId)
-//                    if (!archived) {
-//                        tripPriceTotal -= price
-//                        this.findViewById<TextView>(R.id.dateTitle).text = "Total Spent: $tripPriceTotal$"
-//                    }
-//                }
-//            }
-//    }
 }

@@ -5,9 +5,12 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ListView
+import android.widget.RelativeLayout
 import android.widget.SimpleAdapter
 import android.widget.Spinner
 import android.widget.TextView
@@ -21,15 +24,13 @@ import java.util.concurrent.Executors
 
 
 class ListOfEditorsGenerator {
-    fun generateList(activity : Activity, db: DBHelper, itemDetails: ArrayList<List<String>>, callBackFun: () -> Unit) {
-
+    fun generateList(activity : Activity, itemDetails: ArrayList<List<String>>) {
         Executors.newSingleThreadExecutor()
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
                 val listOfItems = buildData(itemDetails)
                 mainHandler.post {
-                    updateDisplay(activity, listOfItems)
-                    callBackFun()
+                    updateDisplay(activity, listOfItems!!)
                 }
 
             }
@@ -38,7 +39,7 @@ class ListOfEditorsGenerator {
     private fun updateDisplay(activity: Activity, listOfItems: ArrayList<Map<String, String>>){
         val listView : ListView = activity.findViewById(R.id.editorsList)
 
-        val adapter = SimpleAdapter(
+        val adapter = MyEditorsAdapter(
             activity,
             listOfItems,
             R.layout.item_add,
@@ -72,6 +73,28 @@ class ListOfEditorsGenerator {
         item["name"] = name
         item["cost"] = "%,.2f".format(Locale.ENGLISH, cost.toDouble())
         return item
+    }
+}
+
+class MyEditorsAdapter(
+    context: Context,
+    data: ArrayList<Map<String, String>>,
+    @LayoutRes
+    res: Int,
+    from: Array<String>,
+    @IdRes
+    to: IntArray
+): SimpleAdapter(context, data, res, from, to) {
+    override fun getView(position: Int, viewIn: View?, parent: ViewGroup) : View {
+        val view = super.getView(position, viewIn, parent)
+
+        val deleteButton : Button = view.findViewById<Button>(R.id.deleteEditor)
+        deleteButton.setOnClickListener {
+            Log.i("Hello", "Hello")
+
+        }
+
+        return view
     }
 }
 

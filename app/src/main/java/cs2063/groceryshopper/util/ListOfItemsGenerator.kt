@@ -43,7 +43,7 @@ class ListOfItemsGenerator {
     private fun updateDisplay(activity: TripActivity, listOfItems: ArrayList<Map<String, String>>){
         val listView : ListView = activity.findViewById(R.id.tripList)
 
-        val adapter = MySimpleAdapter(
+        val adapter = MyItemsAdapter(
             activity,
             listOfItems,
             R.layout.grocery_trip_item,
@@ -72,7 +72,7 @@ class ListOfItemsGenerator {
     }
 }
 
-class MySimpleAdapter(
+class MyItemsAdapter(
     context: Context,
     data: ArrayList<Map<String, String>>,
     @LayoutRes
