@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -30,6 +31,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.Date
 
+// ToDo: Clean Up File
 
 class OCRActivity : AppCompatActivity() {
     // Attributes for storing the file photo path
@@ -72,20 +74,6 @@ class OCRActivity : AppCompatActivity() {
         finish()
         return true
     }
-
-    private fun dispatchSendEmailIntent(){
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            val addresses = arrayOf<String>("b.jacobs@unb.ca")
-            data = Uri.parse("mailto:") // Only email apps handle this.
-            putExtra(Intent.EXTRA_EMAIL, addresses)
-            putExtra(Intent.EXTRA_SUBJECT, "CS2063 Lab 3")
-            putExtra(Intent.EXTRA_TEXT, "This is a test email!")
-        }
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
-        }
-    }
-
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
@@ -109,6 +97,14 @@ class OCRActivity : AppCompatActivity() {
         val result = recognizer.process(img)
             .addOnSuccessListener { visionText ->
                 Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
+                Log.i("Tag", visionText.text)
+                val ocrText = findViewById<TextView>(R.id.OCRTextView)
+                ocrText.text = visionText.text
+                val intent = Intent(this@OCRActivity, AddActivity::class.java)
+                intent.apply {
+                    putExtra("OCR", visionText.text)
+                }
+                startActivity(intent)
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()

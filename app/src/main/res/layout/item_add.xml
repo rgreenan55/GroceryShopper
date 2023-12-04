@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity"
+    android:clipToPadding="false"
+    >
+
+    <!-- TODO: Fix the sizing of the cards -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemAddCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@color/White"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/name_edit_text"
+                android:hint="Item Name"
+                android:inputType="textCapSentences|textImeMultiLine"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/price_edit_text">
+            </EditText>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/price_edit_text"
+                android:hint="Price"
+                android:inputType="numberDecimal"
+                android:layout_toStartOf="@+id/deleteEditor">
+            </EditText>
+            <Button
+                android:id="@+id/deleteEditor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:text="X"></Button>
+
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/itemId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            />
+        <TextView
+            android:id="@+id/itemArchived"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            />
+
+
+
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

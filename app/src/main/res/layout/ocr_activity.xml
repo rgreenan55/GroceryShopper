@@ -20,6 +20,7 @@
         android:text="Camera"
         />
 
+    <!-- TODO: Rename this card and make it only clickable after text is read -->
     <Button
         android:id="@+id/Email_Button"
         android:layout_width="match_parent"
@@ -29,4 +30,13 @@
         app:cornerRadius="10dp"
         android:text="Files"
         />
+
+    <!-- TODO: Remove this as it was only for testing-->
+    <TextView
+        android:id="@+id/OCRTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="No Text Found" />
 </LinearLayout>
