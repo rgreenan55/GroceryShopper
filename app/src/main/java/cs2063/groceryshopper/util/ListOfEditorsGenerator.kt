@@ -22,9 +22,13 @@ import cs2063.groceryshopper.model.Item
 import java.util.Locale
 import java.util.concurrent.Executors
 
+var activityGlobal : Activity? = null
+var itemDetailsGlobal: ArrayList<List<String>>? = null
 
 class ListOfEditorsGenerator {
     fun generateList(activity : Activity, itemDetails: ArrayList<List<String>>) {
+        activityGlobal = activity
+        itemDetailsGlobal = itemDetails
         Executors.newSingleThreadExecutor()
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
@@ -55,15 +59,8 @@ class ListOfEditorsGenerator {
         //      My suggestion here is to look at each line and any line with a price it
         //      in we assume is an item and we take the item and all the text from that
         //      line and put it in the editor area. Then the user can do the final clean up
-        if(itemDetails.size == 0) {
-            list.add(putData("Apple", "5.99"))
-            list.add(putData("Banana", "3.99"))
-            list.add(putData("Pear", "2.49"))
-        }
-        else{
-            for(details in itemDetails){
-                list.add(putData(details[0], details[1]))
-            }
+        for(details in itemDetails){
+            list.add(putData(details[0], details[1]))
         }
         return list
     }
@@ -91,7 +88,9 @@ class MyEditorsAdapter(
         val deleteButton : Button = view.findViewById<Button>(R.id.deleteEditor)
         deleteButton.setOnClickListener {
             Log.i("Hello", "Hello")
-
+            itemDetailsGlobal!!.removeAt(position)
+            val listOfEditorsGenerator = ListOfEditorsGenerator()
+            listOfEditorsGenerator.generateList(activityGlobal!!, itemDetailsGlobal!!)
         }
 
         return view
