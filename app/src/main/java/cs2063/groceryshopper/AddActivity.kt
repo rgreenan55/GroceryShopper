@@ -97,6 +97,10 @@ class AddActivity : AppCompatActivity() {
         listOfEditorsGenerator.generateList(this, db, rawText)
 
 //        // Setup Archive / Delete for Items
+          // ToDo: Add the delete functionality to all the rows 
+          // (idk if it would be here or in the list generator, 
+          // i assume here as you would want to remove it from 
+          // a list in this activity)
 //        val listView : ListView = this.findViewById(R.id.tripList)
 //        listView.onItemLongClickListener = OnItemLongClickListener { _, item: View, _: Int, _ ->
 //            true
