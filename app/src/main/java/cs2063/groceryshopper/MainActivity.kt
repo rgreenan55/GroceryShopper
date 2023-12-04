@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         val db = DBHelper(this)
 
         // TODO: Remove This ? Or keep for initial data
-        db.testDBs()
+//        db.testDBs()
 
         // ListView Creator
         val listOfTripsGenerator = ListOfTripsGenerator()

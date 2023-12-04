@@ -47,6 +47,11 @@
             android:exported="true"
             android:theme="@style/Theme.GroceryShopper">
         </activity>
+        <activity
+            android:name=".AddActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GroceryShopper">
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="cs2063.groceryshopper.provider"

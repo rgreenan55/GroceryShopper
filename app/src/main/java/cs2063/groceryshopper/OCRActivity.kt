@@ -30,7 +30,6 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.Date
 
-
 class OCRActivity : AppCompatActivity() {
     // Attributes for storing the file photo path
     private lateinit var currentPhotoPath: String
@@ -53,7 +52,7 @@ class OCRActivity : AppCompatActivity() {
             photoUri = dispatchTakePictureIntent()
         }
 
-        val emailButton = findViewById<Button>(R.id.Email_Button)
+        val emailButton = findViewById<Button>(R.id.Read_Button)
         emailButton.setOnClickListener {
             //dispatchSendEmailIntent()
             if (photoUri != null){
@@ -72,20 +71,6 @@ class OCRActivity : AppCompatActivity() {
         finish()
         return true
     }
-
-    private fun dispatchSendEmailIntent(){
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            val addresses = arrayOf<String>("b.jacobs@unb.ca")
-            data = Uri.parse("mailto:") // Only email apps handle this.
-            putExtra(Intent.EXTRA_EMAIL, addresses)
-            putExtra(Intent.EXTRA_SUBJECT, "CS2063 Lab 3")
-            putExtra(Intent.EXTRA_TEXT, "This is a test email!")
-        }
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
-        }
-    }
-
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
@@ -106,9 +91,15 @@ class OCRActivity : AppCompatActivity() {
 
         val img = InputImage.fromFilePath(this, photoUri)
 
-        val result = recognizer.process(img)
+        recognizer.process(img)
             .addOnSuccessListener { visionText ->
-                Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
+                Log.i("Tag", visionText.text)
+                val intent = Intent(this@OCRActivity, AddActivity::class.java)
+                intent.apply {
+                    putExtra("OCR", visionText.text)
+                }
+                startActivity(intent)
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()

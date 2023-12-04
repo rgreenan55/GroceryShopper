@@ -44,7 +44,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         onUpgrade(this.writableDatabase, 0,1)
     }
 
-    fun insertTrip(total: Double, date: String, storeName: String ): Boolean {
+    fun insertTrip(total: Double, date: String, storeName: String ): Long {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(TRIP_COLUMN_TOTAL, total)
@@ -53,8 +53,13 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         Log.i("Insert Trip", unix.toString())
         contentValues.put(TRIP_COLUMN_DATE, unix)
         contentValues.put(TRIP_COLUMN_STORE_NAME, storeName)
-        db.insert(TRIP_TABLE_NAME, null, contentValues)
-        return true
+        return db.insert(TRIP_TABLE_NAME, null, contentValues)
+    }
+
+    fun getTripFromRowId(rowId: Long): Int{
+        val db = this.readableDatabase
+        val res = db.rawQuery("select * from $TRIP_TABLE_NAME WHERE rowid = $rowId", null)
+        return formatTripsList(res)!![0].id
     }
 
     fun updateTrip(id: Int, total: Double, date: String, storeName: String ): Boolean {
@@ -95,7 +100,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return formatTripsList(res)
     }
 
-    private fun formatTripsList(res: Cursor): ArrayList<Trip>?{
+    fun formatTripsList(res: Cursor): ArrayList<Trip>?{
         val output = ArrayList<Trip>()
         res.moveToFirst()
         val idCol = res.getColumnIndex(TRIP_COLUMN_ID)
@@ -115,7 +120,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return output
     }
 
-    private fun insertItem(tripId: Int, price: Double, itemName: String): Boolean {
+    fun insertItem(tripId: Int, price: Double, itemName: String): Boolean {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(ITEM_COLUMN_TRIP_ID, tripId)
