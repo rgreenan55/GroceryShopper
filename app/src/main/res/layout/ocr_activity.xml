@@ -17,26 +17,16 @@
         android:layout_marginHorizontal="50dp"
         android:layout_marginBottom="50dp"
         app:cornerRadius="10dp"
-        android:text="Camera"
+        android:text="Take Photo"
         />
 
-    <!-- TODO: Rename this card and make it only clickable after text is read -->
     <Button
-        android:id="@+id/Email_Button"
+        android:id="@+id/Read_Button"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginHorizontal="50dp"
         android:layout_marginBottom="50dp"
         app:cornerRadius="10dp"
-        android:text="Files"
+        android:text="Read Receipt"
         />
-
-    <!-- TODO: Remove this as it was only for testing-->
-    <TextView
-        android:id="@+id/OCRTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="No Text Found" />
 </LinearLayout>

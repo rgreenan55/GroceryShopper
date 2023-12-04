@@ -8,7 +8,6 @@
     android:clipToPadding="false"
     >
 
-    <!-- TODO: Fix the sizing of the cards -->
     <androidx.cardview.widget.CardView
         android:id="@+id/itemAddCard"
         android:layout_width="match_parent"
@@ -18,37 +17,45 @@
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"
         >
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/name_edit_text"
-                android:hint="Item Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:layout_gravity="bottom"
                 android:inputType="textCapSentences|textImeMultiLine"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/price_edit_text">
+                android:hint="Item Name"
+                >
             </EditText>
 
             <EditText
+                android:id="@+id/price_edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/price_edit_text"
-                android:hint="Price"
+                android:layout_weight="20"
+                android:layout_gravity="bottom"
                 android:inputType="numberDecimal"
-                android:layout_toStartOf="@+id/deleteEditor">
+                android:hint="Price"
+                >
             </EditText>
-            <Button
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/deleteEditor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:text="X"></Button>
+                android:elevation="0dp"
+                app:elevation="0dp"
+                app:srcCompat="@android:drawable/ic_menu_delete"
+                app:backgroundTint="@color/White"
+                app:tint="@color/Black"
+                />
 
-        </RelativeLayout>
+        </LinearLayout>
         <TextView
             android:id="@+id/itemId"
             android:layout_width="wrap_content"

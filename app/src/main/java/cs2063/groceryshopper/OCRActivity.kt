@@ -14,7 +14,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -30,8 +29,6 @@ import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.util.Date
-
-// ToDo: Clean Up File
 
 class OCRActivity : AppCompatActivity() {
     // Attributes for storing the file photo path
@@ -55,7 +52,7 @@ class OCRActivity : AppCompatActivity() {
             photoUri = dispatchTakePictureIntent()
         }
 
-        val emailButton = findViewById<Button>(R.id.Email_Button)
+        val emailButton = findViewById<Button>(R.id.Read_Button)
         emailButton.setOnClickListener {
             //dispatchSendEmailIntent()
             if (photoUri != null){
@@ -94,12 +91,10 @@ class OCRActivity : AppCompatActivity() {
 
         val img = InputImage.fromFilePath(this, photoUri)
 
-        val result = recognizer.process(img)
+        recognizer.process(img)
             .addOnSuccessListener { visionText ->
                 Toast.makeText(this, visionText.text, Toast.LENGTH_SHORT).show()
                 Log.i("Tag", visionText.text)
-                val ocrText = findViewById<TextView>(R.id.OCRTextView)
-                ocrText.text = visionText.text
                 val intent = Intent(this@OCRActivity, AddActivity::class.java)
                 intent.apply {
                     putExtra("OCR", visionText.text)
