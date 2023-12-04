@@ -21,13 +21,17 @@ import java.util.concurrent.Executors
 
 
 class ListOfEditorsGenerator {
-    fun generateList(activity : Activity, db: DBHelper, itemDetails: ArrayList<List<String>>) {
+    fun generateList(activity : Activity, db: DBHelper, itemDetails: ArrayList<List<String>>, callBackFun: () -> Unit) {
 
         Executors.newSingleThreadExecutor()
             .execute {
                 val mainHandler = Handler(Looper.getMainLooper())
                 val listOfItems = buildData(itemDetails)
-                mainHandler.post { updateDisplay(activity, listOfItems) }
+                mainHandler.post {
+                    updateDisplay(activity, listOfItems)
+                    callBackFun()
+                }
+
             }
     }
 

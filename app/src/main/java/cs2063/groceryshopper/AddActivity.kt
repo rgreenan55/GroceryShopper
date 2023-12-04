@@ -86,10 +86,8 @@ class AddActivity : AppCompatActivity() {
         addItemButton.setOnClickListener {
             // ToDo: Have this button add a blank entry to the list
 
-            // The below does not work because the "addView" does not work, we may have to recompute the whole list
-
-//            val editors = this.findViewById<ListView>(R.id.editorsList)
-//            editors.addView(this.findViewById(R.id.itemAddCard))
+            itemsListGlobal.add(listOf("", "0.0"))
+            setUpList(database, itemsListGlobal)
         }
     }
 
@@ -113,20 +111,33 @@ class AddActivity : AppCompatActivity() {
         return output.substring(0, output.length-2) + "." + output.substring(output.length-2)
     }
 
+    fun addFunctionToDeleteButton(){
+        Log.i("Delete Item", "Callback ran")
+        val itemsListView: ListView = this.findViewById(R.id.editorsList)
+        for (i in 0..<itemsListView!!.childCount) {
+            Log.i("Delete Item", "Setting up Delete Button index: $i")
+            val item: RelativeLayout = itemsListView?.getChildAt(i) as RelativeLayout
+            val deleteButton = item.findViewById<Button>(R.id.deleteEditor)
+            deleteButton.setOnClickListener {
+                Log.i("Delete Item", "Delete index: $i")
+                itemsListGlobal.removeAt(i);
+                setUpList(dbGlobal, itemsListGlobal)
+            }
+        }
+    }
+
     private fun setUpList(db: DBHelper, itemDetails: ArrayList<List<String>>){
         // Generate List of Items from DB
         val listOfEditorsGenerator = ListOfEditorsGenerator()
-        listOfEditorsGenerator.generateList(this, db, itemDetails)
+        listOfEditorsGenerator.generateList(this, db, itemDetails) { addFunctionToDeleteButton() } // Running the function here causes it to be ran on nothing
 
 //        // Setup Archive / Delete for Items
           // ToDo: Add the delete functionality to all the rows 
           // (idk if it would be here or in the list generator, 
           // i assume here as you would want to remove it from 
           // a list in this activity)
-//        val listView : ListView = this.findViewById(R.id.tripList)
-//        listView.onItemLongClickListener = OnItemLongClickListener { _, item: View, _: Int, _ ->
-//            true
-//        }
+        // Note: running the function here causes it to be ran on the old list
+        addFunctionToDeleteButton()
     }
 //
 //    private fun updateList() {
