@@ -138,7 +138,7 @@ class AddActivity : AppCompatActivity() {
 
                 if (!dateMatcher.matches()) {
                     mainHandler.post {
-                        Toast.makeText(this, "Please Enter A Valid Date", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Please Enter A Valid Date (yyyy-mm-dd)", Toast.LENGTH_LONG).show()
                     }
                 }
                 else{
